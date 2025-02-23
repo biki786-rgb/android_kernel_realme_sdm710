@@ -1,0 +1,55 @@
+name: Build BloodMoon Kernel
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Kernel Source
+      uses: actions/checkout@v3
+
+    - name: Set up Proton Clang
+      run: |
+        git clone --depth=1 https://github.com/kdrag0n/proton-clang clang
+
+    - name: Set up Build Environment
+      run: |
+        sudo apt update
+        sudo apt install -y bc bison flex libssl-dev make libncurses5-dev gcc clang curl zip
+
+    - name: Build Kernel
+      run: |
+        export KBUILD_BUILD_USER=BloodMoon
+        export KBUILD_BUILD_HOST=RealmeXT
+        export PATH=$PWD/clang/bin:$PATH
+        export ARCH=arm64
+        export SUBARCH=arm64
+        make O=out bloodmoon_defconfig
+        make -j$(nproc) O=out \
+          CC=clang \
+          AR=llvm-ar \
+          NM=llvm-nm \
+          OBJCOPY=llvm-objcopy \
+          OBJDUMP=llvm-objdump \
+          STRIP=llvm-strip \
+          LD=ld.lld \
+          READELF=llvm-readelf
+
+    - name: Package with AnyKernel3
+      run: |
+        git clone --depth=1 https://github.com/osm0sis/AnyKernel3 anykernel
+        cp out/arch/arm64/boot/Image.gz-dtb anykernel/
+        cd anykernel
+        zip -r9 BloodMoon-Kernel.zip * -x .git README.md
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: BloodMoon-Kernel
+        path: anykernel/BloodMoon-Kernel.zip
