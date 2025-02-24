@@ -1,0 +1,63 @@
+name: Build Kernel with Patches
+
+on:
+  workflow_dispatch: # Manually trigger the workflow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      KERNEL_DIR: kernel_source
+      PATCH_DIR: patches
+      OUT_DIR: out
+      ARCH: arm64
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install Build Dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y gcc-aarch64-linux-gnu bc make cpio wget curl zip
+
+    - name: Clone Toolchain
+      run: |
+        git clone --depth=1 https://github.com/kdrag0n/proton-clang clang
+
+    - name: Apply Combined Patches
+      run: |
+        for patch in $PATCH_DIR/*.patch; do
+          if ! git -C $KERNEL_DIR apply "$patch"; then
+            echo "❌ Failed to apply patch: $patch"
+            exit 1
+          fi
+        done
+
+    - name: Build Kernel
+      run: |
+        cd $KERNEL_DIR
+        export PATH=$(pwd)/../clang/bin:$PATH
+        make O=../$OUT_DIR ARCH=$ARCH vendor/realme_xt_defconfig
+        make -j$(nproc) O=../$OUT_DIR ARCH=$ARCH CC=clang CROSS_COMPILE=aarch64-linux-gnu-
+
+    - name: Verify Build Output
+      run: |
+        if [ ! -f "$OUT_DIR/arch/arm64/boot/Image.gz-dtb" ]; then
+          echo "❌ Kernel build failed!"
+          exit 1
+        fi
+        echo "✅ Kernel build successful!"
+
+    - name: Package with AnyKernel3
+      run: |
+        git clone --depth=1 https://github.com/osm0sis/AnyKernel3 anykernel
+        cp $OUT_DIR/arch/arm64/boot/Image.gz-dtb anykernel/
+        cd anykernel
+        zip -r9 Kernel-Flashable.zip * -x "*.git*"
+
+    - name: Upload Flashable ZIP
+      uses: actions/upload-artifact@v4
+      with:
+        name: Kernel-Flashable-ZIP
+        path: anykernel/Kernel-Flashable.zip
