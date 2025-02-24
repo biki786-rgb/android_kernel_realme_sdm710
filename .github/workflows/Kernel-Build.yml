@@ -13,3 +13,25 @@ jobs:
       - name: 🧬 Clone Kernel Source
         run: |
           git clone --depth=1 https://github.com/biki786-rgb/android_kernel_realme_sdm710.git $KERNEL_DIR
+name: Build Kernel with Patches
+
+    - name: 🩹 Apply Patches
+      run: |
+        for patch in $PATCH_DIR/*.patch; do
+          if ! git -C $KERNEL_DIR apply "$patch"; then
+            echo "❌ Failed to apply patch: $patch"
+            exit 1
+          fi
+        done
+
+    - name: ⚙️ Build Kernel
+      run: |
+        cd $KERNEL_DIR
+        make O=../$OUT_DIR ARCH=$ARCH your_defconfig
+        make O=../$OUT_DIR ARCH=$ARCH -j$(nproc)
+
+    - name: 📦 Upload Flashable Kernel
+      uses: actions/upload-artifact@v4
+      with:
+        name: Kernel-Flashable-ZIP
+        path: $OUT_DIR/arch/arm64/boot/Image.gz-dtb
