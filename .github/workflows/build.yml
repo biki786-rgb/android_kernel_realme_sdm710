@@ -1,9 +1,14 @@
+name: Kernel Build
+
+on:
+  workflow_dispatch:  # ✅ Allows manual trigger from GitHub UI
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      KERNEL_DIR: kernel_source
     steps:
       - name: 🧬 Clone Kernel Source
         run: |
           git clone --depth=1 https://github.com/biki786-rgb/android_kernel_realme_sdm710.git $KERNEL_DIR
-    env:
-      KERNEL_DIR: kernel_source
