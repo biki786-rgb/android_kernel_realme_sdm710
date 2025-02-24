@@ -1,0 +1,35 @@
+--- a/drivers/input/touchscreen/touchscreen.c
++++ b/drivers/input/touchscreen/touchscreen.c
+@@ -198,10 +198,12 @@ static void touchscreen_init(void)
+     calibrate_touchscreen();
+     enable_touch_interrupts();
+
+     /* Reduce touch latency */
+-    touchscreen_set_latency(12); 
++    touchscreen_set_latency(5); /* Improved responsiveness */
+
+     initialize_gesture_recognition();
+     setup_power_management();
+
++    /* Increase touch polling rate */
++    input_dev->poll_interval = 5; /* Faster polling for quicker response */
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -500,7 +500,9 @@ static int adreno_gpu_init(struct adreno_gpu *adreno_gpu)
+     /* Set default GPU frequency */
+-    adreno_gpu->default_freq = 500000000; /* 500 MHz */
++    adreno_gpu->default_freq = 650000000; /* Overclock to 650 MHz */
+
++    /* Force Vulkan usage for rendering */
++    adreno_gpu->use_vulkan_renderer = true;
+--- a/drivers/power/pmic/pmic.c
++++ b/drivers/power/pmic/pmic.c
+@@ -120,7 +120,10 @@ static void battery_saving_mode(void)
+     /* Increase deep sleep efficiency */
+-    pm_set_deep_sleep(30); 
++    pm_set_deep_sleep(50); /* Enhanced battery saving */
+
++    /* Enable ultra deep sleep */
++    pmic_enable_ultra_sleep(true);
++
+     adjust_voltage_scaling();
