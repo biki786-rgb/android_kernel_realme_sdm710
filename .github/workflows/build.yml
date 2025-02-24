@@ -1,3 +1,9 @@
-- name: 🧬 Clone Kernel Source
-  run: |
-    git clone --depth=1 https://github.com/biki786-rgb/android_kernel_realme_sdm710.git $KERNEL_DIR
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧬 Clone Kernel Source
+        run: |
+          git clone --depth=1 https://github.com/biki786-rgb/android_kernel_realme_sdm710.git $KERNEL_DIR
+    env:
+      KERNEL_DIR: kernel_source
