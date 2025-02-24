@@ -16,11 +16,11 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential gcc-aarch64-linux-gnu bc
 
-      - name: Apply patches
-        run: |
-          for patch in patches/*.patch; do
-            git apply "$patch"
-          done
+      - name: Apply Combined Patch
+  run: |
+    for patch in patches/*.patch; do
+      git apply "$patch"
+    done
 
       - name: Build kernel modules
         run: |
