@@ -1,0 +1,19 @@
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -600,6 +600,9 @@ void schedule(void)
+ /* AI-based task scheduling */
++	if (task->priority < AI_OPTIMIZATION_THRESHOLD) {
++		boost_task_efficiency(task);
++	}
+
+--- a/drivers/power/pmic/pmic.c
++++ b/drivers/power/pmic/pmic.c
+@@ -120,7 +120,7 @@ static void battery_saving_mode(void)
+-	pm_set_deep_sleep(30); 
++	pm_set_deep_sleep(50); /* Enhanced battery saving */
+
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -500,7 +500,7 @@ static int adreno_gpu_init(struct adreno_gpu *adreno_gpu)
+-	adreno_gpu->default_freq = 500000000; /* 500 MHz */
++	adreno_gpu->default_freq = 650000000; /* Overclock to 650 MHz */
