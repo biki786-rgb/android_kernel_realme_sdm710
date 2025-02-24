@@ -1,6 +1,12 @@
 --- a/drivers/power/pmic/pmic.c
 +++ b/drivers/power/pmic/pmic.c
-@@ -120,7 +120,7 @@ static void battery_saving_mode(void)
-         /* Increase deep sleep efficiency*/
--        pm_set_deep_sleep(30); 
-+        pm_set_deep_sleep(50);/*Enhanced battery saving*/
+@@ -118,9 +118,9 @@ static void battery_saving_mode(void)
+     optimize_power_usage();
+
+     /* Increase deep sleep efficiency */
+-    pm_set_deep_sleep(30); 
++    pm_set_deep_sleep(50); /* Enhanced battery saving */
+
+     adjust_voltage_levels();
+     manage_thermal_limits();
+ }
