@@ -1,0 +1,6 @@
+--- a/drivers/input/touchscreen/touchscreen.c
++++ b/drivers/input/touchscreen/touchscreen.c
+@@ -200,7 +200,7 @@ static void touchscreen_init(void)
+ 	/* Reduce touch latency */
+-	touchscreen_set_latency(12); 
++	touchscreen_set_latency(5); /* Improved responsiveness */
