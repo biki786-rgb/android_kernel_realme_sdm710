@@ -1,6 +1,12 @@
 --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
 +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -500,7 +500,7 @@ static int adreno_gpu_init(struct adreno_gpu *adreno_gpu)
- 	/* Set default GPU frequency */
--	adreno_gpu->default_freq = 500000000; /* 500 MHz */
-+	adreno_gpu->default_freq = 650000000; /* Overclock to 650 MHz */
+@@ -498,10 +498,11 @@ static int adreno_gpu_init(struct adreno_gpu *adreno_gpu)
+     /* Initialize core clock */
+     adreno_gpu->core_clk = devm_clk_get(&pdev->dev, "core");
+
+     /* Set default GPU frequency */
+-    adreno_gpu->default_freq = 500000000; /* 500 MHz */
++    adreno_gpu->default_freq = 650000000; /* Overclock to 650 MHz */
+
+     /* Initialize GPU power management */
+     adreno_gpu_pm_init(adreno_gpu);
