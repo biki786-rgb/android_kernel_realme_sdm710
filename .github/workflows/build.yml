@@ -18,8 +18,8 @@ jobs:
 
     - name: 🧬 Clone Kernel Source
       run: |
-        git clone --depth=1 https://github.com/your-username/your-kernel-source.git $KERNEL_DIR
-
+       git clone https://github.com/biki786-rgb/android_kernel_realme_sdm710.git
+   cd android_kernel_realme_sdm710
     - name: 🩹 Apply Patches
       run: |
         for patch in $PATCH_DIR/*.patch; do
