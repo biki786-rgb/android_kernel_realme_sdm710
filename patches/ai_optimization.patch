@@ -1,0 +1,7 @@
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -600,6 +600,9 @@ void schedule(void)
+ 	/* AI-based task scheduling */
++	if (task->priority < AI_OPTIMIZATION_THRESHOLD) {
++		boost_task_efficiency(task);
++	}
