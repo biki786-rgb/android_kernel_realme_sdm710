@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KERNEL_DIR: kernel_source
-      PATCH_DIR: Patches
+      PATCH_DIR: patches
       OUT_DIR: out
       ARCH: arm64
 
