@@ -1,30 +1,39 @@
-name: Kernel Build with Patches
+name: Kernel Build
 
 on:
-  workflow_dispatch:  # ✅ Manual trigger from GitHub UI
+  workflow_dispatch:  # ✅ Allows manual trigger from GitHub UI
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       KERNEL_DIR: kernel_source
-      PATCH_DIR: patches
+      PATCH_DIR: Patches
       OUT_DIR: out
       ARCH: arm64
 
     steps:
+      - name: 🧬 Clone Repository
+        uses: actions/checkout@v4  # ✅ Ensures patches are available
+
       - name: 🧬 Clone Kernel Source
         run: |
           git clone --depth=1 https://github.com/biki786-rgb/android_kernel_realme_sdm710.git $KERNEL_DIR
 
       - name: 🩹 Apply Patches
         run: |
-          for patch in $PATCH_DIR/*.patch; do
-            if ! git -C $KERNEL_DIR apply "$patch"; then
-              echo "❌ Failed to apply patch: $patch"
-              exit 1
-            fi
-          done
+          if ls $PATCH_DIR/*.patch 1> /dev/null 2>&1; then
+            for patch in $PATCH_DIR/*.patch; do
+              if ! git -C $KERNEL_DIR apply "$patch"; then
+                echo "❌ Failed to apply patch: $patch"
+                exit 1
+              fi
+            done
+            echo "✅ All patches applied successfully."
+          else
+            echo "❌ No patch files found in $PATCH_DIR."
+            exit 1
+          fi
 
       - name: ⚙️ Build Kernel
         run: |
